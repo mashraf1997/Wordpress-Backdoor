@@ -26,7 +26,7 @@ if(!class_exists('MIRROR')) {
             register_deactivation_hook(__FILE__, array(&$this,'deactivate'));
             register_activation_hook(__FILE__, array(&$this,'activate'));
 
-            $this->key = 'keyhere';
+            $this->key = 'key'; // add your key here
             $this->username = 'id'; // add your id here
             $this->password = 'pw'; // add your password here
 

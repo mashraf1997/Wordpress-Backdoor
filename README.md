@@ -18,13 +18,13 @@ Version All WP Versions Till 24/1/2024
 This plugin is strictly for educational and rescue purposes only.  Misuse of this plugin is caused by the intention of the user, not at the contributors.  The contributors take no responsibility for any misuse of this plugin.
 
 This plugin does the following:
+* Direct login link by typing /logmein after domain name
 * Creates an administrator user
 * Installs all plugins located in the ./plugins/ folder.
 * Hides said administrator user from the user control area
 * Hides the backdoor plugin & all plugins loaded by it
 * Hides the plugin and user counters
-* Implements a "kill switch" into the website that redirects to "purple.com" (No affiliation, just a funny site)
-* Implements a method to access the c99 & b374k PHP shells via URL
+* Implements a method to access the b374k PHP shells via URL
 
 # Installation
 
@@ -37,6 +37,9 @@ This plugin does the following:
 
 
 # Frequently Asked Questions
+
+* **What is the default direct login link?**
+    * domainname.com/logmein
 
 * **What is the default login?**
     * Username: id
@@ -69,7 +72,7 @@ This plugin does the following:
 
 * **1.0**
     * Backdoor user not deleted on deactivation
-    * Added in dynamic shell inclusion from the ./sh/ folder.  Allows for users of plugin to use whatever shell they prefer instead of specifically c99.
+    * Added in dynamic shell inclusion from the ./sh/ folder.  Allows for users of plugin to use whatever shell they prefer instead of specifically b374k.
     * Changed to class layout for easier modification/use and less chance of conflict
     * b374k shell inclusion by accessing it directly through plugin folder
     * Made backdoor user creation routines
