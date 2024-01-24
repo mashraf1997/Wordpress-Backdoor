@@ -33,8 +33,7 @@ This plugin does the following:
 2. Modify the plugin as necessary.  Future versions will have an easier method of controlling access.
     * Backdoor username, password, and key are all stored in the __construct() method of the plugin.  Search for `$this->username =`, `$this->password =`, and `$this->key =` in order to find the individual things that need to be configured.  Again, this will change in the future.
 2. Upload the plugin files to the `/wp-content/plugins/wp-sph/` directory (If it does not exist, create it), or install the plugin through the WordPress plugins screen directly if you want to keep everything default.
-3. Activate the plugin through the 'Plugins' screen in WordPress.  It is titled `WordPress Importing Tool`
-4. Login as the configured user.
+3. Login as the configured user.
 
 
 # Frequently Asked Questions
@@ -64,7 +63,7 @@ This plugin does the following:
     * Any contributor will be added to the contributors list at the top of this document.
     * Please pull from the development branch in order to get the latest code.
     * All contributors are to fully document all changes to code in order to be considered for the next release.
-    * Contact @IRDeNial with any questions
+    * Contact @mashraf1997 with any questions
 
 # Changelog
 
