@@ -1,85 +1,69 @@
-# Wordpress Backdoor Plugin
+# wp-backdoor-scan
 
-## Heads up
+**A defensive scanner that finds PHP backdoors and webshells** in a WordPress install (or any PHP codebase). It reads your files and flags the code patterns and filenames that backdoors use — it never executes or modifies anything.
 
-This project is maintained and likely will be for quite some time since I'm not fairly busy with other projects. If you want to update the plugin to work if something is broken, feel free to submit a PR.
+> This repository previously hosted live webshell code. That material has been removed and the project repurposed into a detection tool for defenders. If you are cleaning up a hacked WordPress site, this is a starting point for triage.
 
-## Contributors
-MirrorORG 
-Thanks To IRDeNial
+## Usage
 
-## Tested On
-Version All WP Versions Till 24/1/2024
+```bash
+php wp-backdoor-scan.php /path/to/wordpress
+```
 
-**License**: GPLv3 or later
+Example output:
 
-# Description
+```text
+wp-backdoor-scan
+────────────────────────────────────────────────────────────────
+Scanned 4213 file(s) under /var/www/html
 
-This plugin is strictly for educational and rescue purposes only.  Misuse of this plugin is caused by the intention of the user, not at the contributors.  The contributors take no responsibility for any misuse of this plugin.
+ [CRITICAL] wp-content/uploads/2024/07/logo.php:1
+            Executes code coming from request input (eval/assert on $_GET/$_POST/...)  (eval-request-input)
+ [HIGH    ] wp-includes/class-wp.php:88
+            Writes request input to a file (dropper)  (write-request-to-file)
+ [MEDIUM  ] wp-content/mu-plugins/up.php
+            Filename commonly used by shells/backdoors  (suspicious-filename)
 
-This plugin does the following:
-* Direct login link by typing /logmein after domain name
-* Creates an administrator user
-* Installs all plugins located in the ./plugins/ folder.
-* Hides said administrator user from the user control area
-* Hides the backdoor plugin & all plugins loaded by it
-* Hides the plugin and user counters
-* Implements a method to access the b374k PHP shells via URL
+────────────────────────────────────────────────────────────────
+3 finding(s): 1 critical, 1 high, 1 medium
+```
 
-# Installation
+### Options
 
-1. Download the latest release from here: 
-    * https://github.com/mashraf1997/Wordpress-Backdoor/releases/
-2. Modify the plugin as necessary.  Future versions will have an easier method of controlling access.
-    * Backdoor username, password, and key are all stored in the __construct() method of the plugin.  Search for `$this->username =`, `$this->password =`, and `$this->key =` in order to find the individual things that need to be configured.  Again, this will change in the future.
-2. Upload the plugin files to the `/wp-content/plugins/wp-sph/` directory (If it does not exist, create it), or install the plugin through the WordPress plugins screen directly if you want to keep everything default.
-3. Login as the configured user.
+| Option | Description |
+| :--- | :--- |
+| `--json` | Output findings as JSON (for dashboards or CI) |
+| `--min=LEVEL` | Minimum severity to report: `info`, `low`, `medium`, `high`, `critical` (default `low`) |
+| `--ext=LIST` | Extensions to scan (default `php,php3,php4,php5,phtml,pht,phar,inc`) |
+| `--max-size=BYTES` | Skip files larger than this (default 3 MB) |
+| `-h`, `--help` | Show help |
 
+**Exit codes:** `0` = nothing found at/above the threshold, `1` = findings, `2` = usage error. This makes it usable as a CI gate:
 
-# Frequently Asked Questions
+```bash
+php wp-backdoor-scan.php --min=high --json public_html/ || echo "Potential backdoor detected!"
+```
 
-* **What is the default direct login link?**
-    * domainname.com/logmein
+## What it detects
 
-* **What is the default login?**
-    * Username: id
-    * Password: pw
+- **Code execution from request input** — `eval`/`assert`/`system`/`exec`/backticks driven by `$_GET`/`$_POST`/`$_REQUEST`/`$_COOKIE`.
+- **Obfuscated payloads** — `eval(base64_decode(...))`, stacked `gzinflate`/`str_rot13` decoders, `preg_replace` with the `/e` modifier, `create_function`, dynamic `$_GET[...]()` calls.
+- **Known shell fingerprints** — b374k, c99, r57, WSO, FilesMan and similar signatures.
+- **Droppers & uploaders** — writing request input to files, `move_uploaded_file`, hard-coded password gates.
+- **Suspicious files** — shell-like filenames and double extensions (`image.php.jpg`, `file.jpg.php`).
 
-* **What is the default key?**
-    * key
+## Requirements
 
-* **How do I access a PHP shell?**
-    * To access, for example, the default b374k shell on http://localhost.com, you would navigate to this url:    
-        * http://localhost.com/loadshell-b374k-key
-    * The pattern for this is `loadshell-(SHELLNAME)-(KEY)`.
+- PHP 7.4 or newer (CLI). No external dependencies.
 
-* **Does the backdoor user show up for other admins?**
-    * No, the backdoor user is only visible to the backdoor user.  All other users will not see the backdoor user.
+## Limitations
 
-* **Do any users see my installed plugins?**
-    * No, the plugins installed by this plugin are hidden to all users except the backdoor user.  Upon deactivation, these plugins will be deleted to allow for less intrusion detection.
+This is a **triage aid**, not a guarantee. Signature/heuristic scanners miss novel or heavily obfuscated backdoors and can flag legitimate code (e.g. a real upload handler). Always:
 
-* **If I deactivate the plugin, will I still have access to the website?**
-    * No, upon deactivation, the plugin won't remove the backdoor user. so it is wise to delete the plugin files, excluding the plugin itself, before disabling.  This will be changed in a future version.
+- Compare files against known-good copies of WordPress core, your theme, and plugins.
+- Review anything the scanner flags **and** anything recently modified.
+- Rotate credentials and keys after any confirmed compromise.
 
-# Contribution
-    * Any contributor will be added to the contributors list at the top of this document.
-    * Please pull from the development branch in order to get the latest code.
-    * All contributors are to fully document all changes to code in order to be considered for the next release.
-    * Contact @mashraf1997 with any questions
+## License
 
-# Changelog
-
-* **1.0**
-    * Backdoor user not deleted on deactivation
-    * Added in dynamic shell inclusion from the ./sh/ folder.  Allows for users of plugin to use whatever shell they prefer instead of specifically b374k.
-    * Changed to class layout for easier modification/use and less chance of conflict
-    * b374k shell inclusion by accessing it directly through plugin folder
-    * Made backdoor user creation routines
-    * Made backdoor user hidden from all users
-    * Made it forcefully activate if it is installed WP Downloader and keep it activated
-
-# Roadmap
-* Allow for custom code inclusion that takes advantage of the WP_SPH class & methods.
-* Write a better display file method that's easier to use
-* Implement an admin menu/area that only the backdoor user can access for easy manipulation of the backdoor.
+[GPL-3.0](./LICENSE.txt)
